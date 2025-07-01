@@ -9,7 +9,7 @@
 ## Requirements
 
 - Unity Editor version **2021.3.28f1 (LTS)** installed via Unity Hub
-- [UniTask](https://github.com/Cysharp/UniTask)
+- [UniTask](https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package)
 
 ---
 
@@ -20,4 +20,4 @@
 3. Select **Add package from git URL...**  
 4. Enter the Git URL of the package repository: `https://github.com/samsonahh/MVCTool.git`
 5. Click **Add**. Unity will download and install the package.
-6. You must manually install [UniTask](https://github.com/Cysharp/UniTask)
+6. You must manually install [UniTask](https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package)
