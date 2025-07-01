@@ -1,0 +1,16 @@
+{
+  "name": "mvctool",
+  "version": "0.0.1",
+  "displayName": "MVC Tool",
+  "description": "A Unity Editor tool to manage My Virtual Channel (MVC) content.",
+  "unity": "2021.3",
+  "author": {
+    "name": "Your Name",
+    "url": "https://github.com/yourorg/avatar-uploader"
+  },
+  "dependencies": {
+    "com.cysharp.unitask": "2.5.10",
+    "com.unity.animation.rigging": "1.2.1"
+  },
+  "unityRelease": "28f1"
+}
