@@ -8,7 +8,6 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 namespace MVCTool
 {
