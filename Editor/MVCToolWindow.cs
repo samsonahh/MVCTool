@@ -10,7 +10,7 @@ namespace MVCTool
     {
         private EditorTabManager _tabManager;
 
-        private const string SavedTabIndexEditorPrefsKey = "MVCTool_SavedTabIndex";
+        private const string SavedTabIndexSessionKey = "MVCTool_SavedTabIndex";
 
         private Vector2 _scrollPosition;
 
@@ -30,7 +30,7 @@ namespace MVCTool
                     new AvatarTab(),
                 },
                 this,
-                SavedTabIndexEditorPrefsKey
+                SavedTabIndexSessionKey
             );
         }
 

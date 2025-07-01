@@ -93,6 +93,16 @@ namespace MVCTool
             GUILayout.Label($"Editor", titleStyle);
             MVCToolWindow.DrawSeparator();
 
+            GUILayout.Box(
+                $"Please make sure you are double-clicked into the MVCAvatar prefab and are inside prefab view.\n" +
+                $"Select the parent MVCAvatar GameObject inside the prefab view hierarchy.",
+                new GUIStyle(EditorStyles.helpBox)
+                {
+                    fontSize = 12,
+                    wordWrap = true
+                }
+            );
+
             MVCAvatar selectedAvatar = _selectedObject != null ? _selectedObject.GetComponent<MVCAvatar>() : null;
             bool isAvatarInHierarchy = !EditorUtility.IsPersistent(_selectedObject) && selectedAvatar != null;
 
@@ -103,12 +113,9 @@ namespace MVCTool
             EditorGUILayout.Space();
 
             EditorGUI.BeginDisabledGroup(!isAvatarInHierarchy);
-            if (GUILayout.Button("Create Avatar Rig", GUILayout.Height(30)))
+            if (GUILayout.Button("Setup Avatar", GUILayout.Height(30)))
             {
                 selectedAvatar.CreateRig();
-            }
-            if (GUILayout.Button("Setup Avatar Hand References", GUILayout.Height(30)))
-            {
                 selectedAvatar.CreateHandReferences();
             }
             EditorGUI.EndDisabledGroup();

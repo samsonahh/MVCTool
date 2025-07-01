@@ -13,11 +13,8 @@ namespace MVCTool
 
         public static readonly string DefaultBaseUrl = "https://mvcdev.represent.org/";
 
-        public static class EditorPrefsKeys
-        {
-            public static readonly string BaseUrl = "MVCTool_BaseUrl";
-            public static readonly string BearerToken = "MVCTool_LoginBearerToken";
-        }
+        public static readonly string BaseUrlEditorPrefsKey = "MVCTool_BaseUrl";
+        public static readonly string BearerTokenSessionKey = "MVCTool_LoginBearerToken";
 
         public enum TokenValidationResult
         {
@@ -61,18 +58,18 @@ namespace MVCTool
         public static void SetBaseUrl(string url)
         {
             BaseUrl = url;
-            EditorPrefs.SetString(EditorPrefsKeys.BaseUrl, url);
+            EditorPrefs.SetString(BaseUrlEditorPrefsKey, url);
         }
 
         public static void ClearBaseUrl()
         {
             BaseUrl = DefaultBaseUrl;
-            EditorPrefs.DeleteKey(EditorPrefsKeys.BaseUrl);
+            EditorPrefs.DeleteKey(BaseUrlEditorPrefsKey);
         }
 
         public static void LoadStoredBaseUrl()
         {
-            BaseUrl = EditorPrefs.GetString(EditorPrefsKeys.BaseUrl, DefaultBaseUrl);
+            BaseUrl = EditorPrefs.GetString(BaseUrlEditorPrefsKey, DefaultBaseUrl);
             if (string.IsNullOrEmpty(BaseUrl))
                 BaseUrl = DefaultBaseUrl;
         }
@@ -80,7 +77,8 @@ namespace MVCTool
         public static void SetBearerToken(string token)
         {
             BearerToken = token;
-            EditorPrefs.SetString(EditorPrefsKeys.BearerToken, token);
+            SessionState.SetString(BearerTokenSessionKey, token);
+            // EditorPrefs.SetString(EditorPrefsKeys.BearerToken, token);
         }
 
         /// <summary>
@@ -89,12 +87,14 @@ namespace MVCTool
         public static void ClearBearerToken()
         {
             BearerToken = null;
-            EditorPrefs.DeleteKey(EditorPrefsKeys.BearerToken);
+            SessionState.EraseString(BearerTokenSessionKey);
+            // EditorPrefs.DeleteKey(EditorPrefsKeys.BearerToken);
         }
 
         public static void LoadStoredBearerToken()
         {
-            BearerToken = EditorPrefs.GetString(EditorPrefsKeys.BearerToken, null);
+            BearerToken = SessionState.GetString(BearerTokenSessionKey, null);
+            // BearerToken = EditorPrefs.GetString(EditorPrefsKeys.BearerToken, null);
             if (string.IsNullOrEmpty(BearerToken))
                 BearerToken = null;
         }
