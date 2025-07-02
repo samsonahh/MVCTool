@@ -19,14 +19,13 @@ namespace MVCTool
         [SerializeField, ReadOnly] private Transform _rightHandReference;
         [SerializeField, ReadOnly] private Transform _leftHandReference;
 
-        [field: Header("Bone Transforms")]
-        [field: SerializeField, ReadOnly] public Transform Head { get; private set; }
-        [field: SerializeField, ReadOnly] public Transform RightArm { get; private set; }
-        [field: SerializeField, ReadOnly] public Transform RightForearm { get; private set; }
-        [field: SerializeField, ReadOnly] public Transform RightHand { get; private set; }
-        [field: SerializeField, ReadOnly] public Transform LeftHand { get; private set; }
-        [field: SerializeField, ReadOnly] public Transform LeftArm { get; private set; }
-        [field: SerializeField, ReadOnly] public Transform LeftForearm { get; private set; }
+        public Transform Head { get; private set; }
+        public Transform RightArm { get; private set; }
+        public Transform RightForearm { get; private set; }
+        public Transform RightHand { get; private set; }
+        public Transform LeftHand { get; private set; }
+        public Transform LeftArm { get; private set; }
+        public Transform LeftForearm { get; private set; }
 
         [Header("Rigging")]
         [SerializeField, ReadOnly] private RigBuilder _rigBuilder;
@@ -130,10 +129,6 @@ namespace MVCTool
 
             _leftHandReference.SetParent(LeftHand);
             _leftHandReference.localPosition = Vector3.zero;
-
-#if UNITY_EDITOR
-            EditorUtility.SetDirty(this);
-#endif
         }
 
         /// <summary>
@@ -205,10 +200,6 @@ namespace MVCTool
             leftIKHint.localPosition = -0.5f * Vector3.one;
             leftHandIK.data.hint = leftIKHint;
             _leftHandIK = leftHandIK;
-
-#if UNITY_EDITOR
-            EditorUtility.SetDirty(this);
-#endif
         }
 
         /// <summary>
@@ -225,18 +216,6 @@ namespace MVCTool
             leftHandTarget.SetParent(leftHand);
             leftHandTarget.localPosition = Vector3.zero;
             leftHandTarget.localRotation = Quaternion.identity;
-
-            // Palm
-            StartCoroutine(DebugDrawLine(rightHand, Vector3.left, Color.red));
-            StartCoroutine(DebugDrawLine(leftHand, Vector3.right, Color.red));
-
-            // Fingers
-            StartCoroutine(DebugDrawLine(rightHand, Vector3.forward, Color.blue));
-            StartCoroutine(DebugDrawLine(leftHand, Vector3.forward, Color.blue));
-
-            // Thumb
-            StartCoroutine(DebugDrawLine(rightHand, Vector3.up, Color.green));
-            StartCoroutine(DebugDrawLine(leftHand, Vector3.up, Color.green));
 
             // Setup IK
             WeightedTransformArray headIKSources = new WeightedTransformArray();
@@ -298,16 +277,6 @@ namespace MVCTool
             leftHandTarget.rotation = leftAlignRotation * Quaternion.Inverse(leftReferenceRotation);
         }
 
-        private IEnumerator DebugDrawLine(Transform t, Vector3 dir, Color color)
-        {
-            while (true)
-            {
-                Vector3 relativeDir = t.TransformDirection(dir);
-                Debug.DrawRay(t.position, relativeDir, color, 0.05f);
-                yield return new WaitForSecondsRealtime(0.05f);
-            }
-        }
-
         /// <summary>
         /// Checks if the avatar is ready for upload by making sure all necessary references are set.
         /// </summary>
@@ -331,6 +300,20 @@ namespace MVCTool
                 return false;
 
             return true;
+        }
+
+        /// <summary>
+        /// Assigns the provided animator controller to the avatar's Animator component.
+        /// </summary>
+        public void AssignAnimatorController(RuntimeAnimatorController controller)
+        {
+            if(controller == null)
+            {
+                Debug.LogError($"Animator controller is missing, cannot assign null controller to animator.");
+                return;
+            }
+
+            Animator.runtimeAnimatorController = controller;
         }
     }
 }

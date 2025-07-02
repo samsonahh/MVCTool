@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace MVCTool
@@ -12,6 +13,10 @@ namespace MVCTool
 
         #region Editor
         private GameObject _selectedObject;
+
+        private static readonly AnimatorController _mvcAnimatorController =
+            AssetDatabase.LoadAssetAtPath<AnimatorController>
+            ("Packages/mvctool/Assets/Animations/MVCAnimatorController.controller");     
         #endregion
 
         #region Build/Upload
@@ -117,6 +122,8 @@ namespace MVCTool
             {
                 selectedAvatar.CreateRig();
                 selectedAvatar.CreateHandReferences();
+                selectedAvatar.AssignAnimatorController(_mvcAnimatorController);
+                EditorUtility.SetDirty(selectedAvatar.gameObject); // Auto save prefab changes
             }
             EditorGUI.EndDisabledGroup();
 
