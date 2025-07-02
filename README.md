@@ -20,4 +20,5 @@
 3. Select **Add package from git URL...**  
 4. Enter the Git URL of the package repository: `https://github.com/samsonahh/MVCTool.git`
 5. Click **Add**. Unity will download and install the package.
-6. You must manually install [UniTask](https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package)
+6. You must manually install [UniTask](https://github.com/Cysharp/UniTask?tab=readme-ov-file#upm-package) by adding the Git URL to the same place from the previous steps:
+`https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask`
