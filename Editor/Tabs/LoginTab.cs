@@ -129,12 +129,12 @@ namespace MVCTool
             {
                 Debug.LogError($"Login exception: {ex.Message}");
                 _errorMessage = $"Login failed!";
-                ForceDraw(); // Force redraw to show the error message
             }
             finally
             {
                 _isLoggingIn = false;
             }
+            ForceDraw();
         }
 
         private void Logout()
