@@ -34,6 +34,12 @@ namespace MVCTool
         [SerializeField, ReadOnly] private TwoBoneIKConstraint _rightHandIK;
         [SerializeField, ReadOnly] private TwoBoneIKConstraint _leftHandIK;
 
+        [Header("Animation")]
+        [SerializeField, ReadOnly] private Vector3 _lastPosition;
+        [SerializeField, ReadOnly] private Vector3 _estimatedVelocity;
+        [SerializeField, ReadOnly] private Vector3 _animationVelocity;
+        [SerializeField] private float _maxAnimatorSpeed = 2f;
+
         private void Awake()
         {
             Animator = GetComponent<Animator>();
@@ -96,6 +102,32 @@ namespace MVCTool
             Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
         }
 #endif
+
+        private void Update()
+        {
+            HandleAnimationParameters();
+        }
+
+        private void LateUpdate()
+        {
+            _lastPosition = transform.position;
+        }
+        
+        /// <summary>
+        /// Assigns the horizontal and vertical movement animation parameters by estimating the velocity.
+        /// </summary>
+        private void HandleAnimationParameters()
+        {
+            _estimatedVelocity = (transform.position - _lastPosition) / Time.deltaTime;
+
+            Vector3 relativeVelocity = transform.InverseTransformDirection(_estimatedVelocity);
+            float horizontal = Mathf.Clamp(relativeVelocity.x/_maxAnimatorSpeed, -1f, 1f);
+            float vertical = Mathf.Clamp(relativeVelocity.z/_maxAnimatorSpeed, -1f, 1f);
+
+            _animationVelocity = new Vector3(horizontal, 0f, vertical);
+            Animator.SetFloat("HorizontalMovement", _animationVelocity.x);
+            Animator.SetFloat("VerticalMovement", _animationVelocity.z);
+        }
 
         /// <summary>
         /// Gets the bone transforms for the head and hands from the Animator.
@@ -282,6 +314,9 @@ namespace MVCTool
         /// </summary>
         public bool IsReadyForUpload()
         {
+            if (Animator == null)
+                return false;
+
             if (_rightHandReference == null)
                 return false;
             if (_leftHandReference == null)
