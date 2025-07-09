@@ -38,7 +38,7 @@ namespace MVCTool
         [SerializeField, ReadOnly] private Vector3 _lastPosition;
         [SerializeField, ReadOnly] private Vector3 _estimatedVelocity;
         [SerializeField, ReadOnly] private Vector3 _animationVelocity;
-        [SerializeField] private float _maxAnimatorSpeed = 2f;
+        [SerializeField] private float _maxAnimatorSpeed = 1f;
 
         private void Awake()
         {
