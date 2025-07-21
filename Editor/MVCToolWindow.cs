@@ -26,7 +26,7 @@ namespace MVCTool
                 new List<EditorTab>()
                 {
                     new LoginTab(),
-                    new ChannelAssetsTab(),
+                    new ChannelUploadTab(),
                     new AvatarTab(),
                 },
                 this,

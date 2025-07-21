@@ -57,11 +57,11 @@ namespace MVCTool
             _errorMessage = null;
             _uploadStatusMessage = null;
 
-            _availableBuildTargets = AssetBundler.GetAvailableBuildTargets();
+            _availableBuildTargets = ContentUploader.GetAvailableBuildTargets();
             _buildTargetOptions = new Dictionary<BuildTarget, bool>();
             foreach (var target in _availableBuildTargets)
             {
-                _buildTargetOptions[target] = EditorPrefs.GetBool(AssetBundler.SupportedBuildTargets[target].EditorPrefsKey, false);
+                _buildTargetOptions[target] = EditorPrefs.GetBool(ContentUploader.SupportedBuildTargets[target].EditorPrefsKey, false);
             }
             _selectedBuildTargets = GetSelectedBuildTargets();
 
@@ -75,11 +75,11 @@ namespace MVCTool
 
         private protected override void Load()
         {
-            _availableBuildTargets = AssetBundler.GetAvailableBuildTargets();
+            _availableBuildTargets = ContentUploader.GetAvailableBuildTargets();
             _buildTargetOptions = new Dictionary<BuildTarget, bool>();
             foreach (var target in _availableBuildTargets)
             {
-                _buildTargetOptions[target] = EditorPrefs.GetBool(AssetBundler.SupportedBuildTargets[target].EditorPrefsKey, false);
+                _buildTargetOptions[target] = EditorPrefs.GetBool(ContentUploader.SupportedBuildTargets[target].EditorPrefsKey, false);
             }
         }
 
@@ -148,14 +148,14 @@ namespace MVCTool
             EditorGUILayout.LabelField("Select Build Targets:", EditorStyles.boldLabel);
             foreach (var target in _availableBuildTargets)
             {
-                bool newValue = EditorGUILayout.ToggleLeft(AssetBundler.SupportedBuildTargets[target].DisplayName, _buildTargetOptions[target]);
+                bool newValue = EditorGUILayout.ToggleLeft(ContentUploader.SupportedBuildTargets[target].DisplayName, _buildTargetOptions[target]);
                 if (newValue != _buildTargetOptions[target])
                 {
                     _buildTargetOptions[target] = newValue;
-                    EditorPrefs.SetBool(AssetBundler.SupportedBuildTargets[target].EditorPrefsKey, _buildTargetOptions[target]);
+                    EditorPrefs.SetBool(ContentUploader.SupportedBuildTargets[target].EditorPrefsKey, _buildTargetOptions[target]);
                     _selectedBuildTargets = GetSelectedBuildTargets();
 
-                    AssetBundler.ClearBuiltAvatarPrefabData();
+                    ContentUploader.ClearBuiltAvatarPrefabData();
 
                     ForceDraw();
                 }
@@ -179,12 +179,12 @@ namespace MVCTool
             else if(!isAvatarPrefab)
             {
                 EditorGUILayout.HelpBox("The selected prefab does not contain an MVCAvatar component.", MessageType.Warning);
-                AssetBundler.ClearBuiltAvatarPrefabData();
+                ContentUploader.ClearBuiltAvatarPrefabData();
             }
             else if (!canUploadAvatar)
             {
                 EditorGUILayout.HelpBox("The selected MVCAvatar is not ready for upload. Please ensure it has the necessary components and references set up.", MessageType.Warning);
-                AssetBundler.ClearBuiltAvatarPrefabData();
+                ContentUploader.ClearBuiltAvatarPrefabData();
             }
 
             if (!hasBuildTargets)
@@ -193,13 +193,13 @@ namespace MVCTool
             EditorGUILayout.Space();
 
             GUI.enabled = false;
-            EditorGUILayout.ObjectField("Built Avatar Prefab", AssetBundler.BuiltAvatarPrefabData?.Prefab , typeof(GameObject), false);
+            EditorGUILayout.ObjectField("Built Avatar Prefab", ContentUploader.BuiltAvatarPrefabData?.Prefab , typeof(GameObject), false);
             GUI.enabled = true;
         }
 
         private void DrawUploadSection()
         {
-            bool canUpload = AssetBundler.BuiltAvatarPrefabData != null && !_isUploading;
+            bool canUpload = ContentUploader.BuiltAvatarPrefabData != null && !_isUploading;
             EditorGUI.BeginDisabledGroup(!canUpload);
 
             GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
@@ -217,7 +217,7 @@ namespace MVCTool
 
             EditorGUI.EndDisabledGroup();
 
-            bool isBuildWarningVisible = AssetBundler.BuiltAvatarPrefabData?.Prefab == null;
+            bool isBuildWarningVisible = ContentUploader.BuiltAvatarPrefabData?.Prefab == null;
             if (_isLoggedIn && isBuildWarningVisible)
             {
                 EditorGUILayout.HelpBox("Please build your avatar prefab to upload.", MessageType.Warning);
@@ -239,7 +239,7 @@ namespace MVCTool
 
         private void BuildAvatarPrefab()
         {
-            AssetBundler.BuildAvatarPrefab(_avatarPrefabToBuild, GetSelectedBuildTargets());
+            ContentUploader.BuildAvatarPrefab(_avatarPrefabToBuild, GetSelectedBuildTargets());
         }
 
         private async UniTask UploadAvatar()
@@ -251,7 +251,7 @@ namespace MVCTool
 
             try
             {
-                await AssetBundler.UploadBuiltAvatarPrefab();
+                await ContentUploader.UploadBuiltAvatarPrefab();
                 _uploadStatusMessage = $"Avatar uploaded successfully!";
             }
             catch (System.Exception e)

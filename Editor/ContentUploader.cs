@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 
 namespace MVCTool
 {
-    public static class AssetBundler
+    public static class ContentUploader
     {
         public static readonly Dictionary<BuildTarget, BuildTargetData> SupportedBuildTargets = new Dictionary<BuildTarget, BuildTargetData>
         {
@@ -372,6 +372,57 @@ namespace MVCTool
                 throw;
             }
         }
+
+        /// Upload file to channel 
+        /// API Endpoint: https://mvcdev.represent.org/strapi/api/uploadContentToChannel
+        /// 
+        public static async UniTask UploadContentToChannel(string channelID, byte[] fileBytes, string fileName, bool published = true)
+        {
+            if (fileBytes == null || fileBytes.Length == 0)
+            {
+                Debug.LogError("File bytes are empty. Cannot upload.");
+                throw new System.Exception("Empty file data.");
+            }
+
+            if (string.IsNullOrEmpty(channelID))
+            {
+                Debug.LogError("Channel ID is not set. Please provide a valid channel ID.");
+                throw new System.Exception("Channel ID is not set.");
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                Debug.LogError("File name is required.");
+                throw new System.Exception("File name is required.");
+            }
+
+            string baseUrl = LoginApi.BaseUrl.TrimEnd('/');
+            string targetUrl = $"{baseUrl}/strapi/api/uploadContentToChannel";
+
+            try
+            {
+                WWWForm form = new WWWForm();
+                form.AddBinaryData(fileName, fileBytes, fileName, "text/plain"); // Adjust MIME type as needed
+                form.AddField("uniqueID", channelID);
+                form.AddField("published", published ? "true" : "false");
+
+                UnityWebRequest request = await LoginApi.AuthenticatedPost(targetUrl, form);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"UploadContentToChannel failed: {request.error}");
+                    Debug.LogError($"Server response: {request.downloadHandler.text}");
+                }
+                else
+                    Debug.Log($"Successfully uploaded content file {fileName} to {targetUrl}.");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"UploadContentToChannel failed: {e}");
+                throw;
+            }
+        }
+
     }
 
     public struct BuildTargetData

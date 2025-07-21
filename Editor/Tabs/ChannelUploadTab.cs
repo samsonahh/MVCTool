@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace MVCTool
 {
-    public class ChannelAssetsTab : EditorTab
+    public class ChannelUploadTab : EditorTab
     {
-        public override string TabName => "Channel Assets";
+        public override string TabName => "Channel Upload";
 
         private bool _isLoggedIn => LoginApi.HasBearerToken;
 
@@ -35,9 +35,9 @@ namespace MVCTool
         {
             EditorGUI.BeginDisabledGroup(!_isLoggedIn || _isUploading);
 
-            DrawBuildSection();
+            DrawNonUnityContentSection();
             MVCToolWindow.DrawSeparator();
-            DrawUploadToChannelSection();
+            DrawUnityAssetsSection();
 
             EditorGUI.EndDisabledGroup();
 
@@ -50,11 +50,11 @@ namespace MVCTool
             _errorMessage = null;
             _uploadStatusMessage = null;
 
-            _availableBuildTargets = AssetBundler.GetAvailableBuildTargets();
+            _availableBuildTargets = ContentUploader.GetAvailableBuildTargets();
             _buildTargetOptions = new Dictionary<BuildTarget, bool>();
             foreach (var target in _availableBuildTargets)
             {
-                _buildTargetOptions[target] = EditorPrefs.GetBool(AssetBundler.SupportedBuildTargets[target].EditorPrefsKey, false);
+                _buildTargetOptions[target] = EditorPrefs.GetBool(ContentUploader.SupportedBuildTargets[target].EditorPrefsKey, false);
             }
             _selectedBuildTargets = GetSelectedBuildTargets();
         }
@@ -67,7 +67,7 @@ namespace MVCTool
         private protected override void Load()
         {
             _prefabsToBuild = new List<GameObject>();
-            _builtPrefabs = AssetBundler.GetBuiltPrefabs();
+            _builtPrefabs = ContentUploader.GetBuiltPrefabs();
 
             _prefabsToBuildReorderableList = CreatePrefabsToBuildReorderableList();
             _builtPrefabsReorderableList = CreateBuiltPrefabsReorderableList();
@@ -81,6 +81,17 @@ namespace MVCTool
             _uploadStatusMessage = null;
 
             EditorPrefs.DeleteKey(ChannelIDEditorPrefsKey); 
+        }
+
+        private void DrawNonUnityContentSection()
+        {
+            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
+            {
+                fontSize = 20,
+                alignment = TextAnchor.MiddleCenter
+            };
+            GUILayout.Label($"Non-Unity Content", titleStyle);
+            MVCToolWindow.DrawSeparator();
         }
 
         private ReorderableList CreatePrefabsToBuildReorderableList()
@@ -126,23 +137,28 @@ namespace MVCTool
             };
 
             reorderableList.onRemoveCallback = (list) => {
-                AssetBundler.RemoveBuiltPrefab(_builtPrefabs[list.index]);
+                ContentUploader.RemoveBuiltPrefab(_builtPrefabs[list.index]);
                 _builtPrefabs.RemoveAt(list.index);
             };
 
             return reorderableList;
         }
 
-        private void DrawBuildSection()
+        private void DrawUnityAssetsSection()
         {
             GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
             {
                 fontSize = 20,
                 alignment = TextAnchor.MiddleCenter
             };
-            GUILayout.Label($"Build", titleStyle);
+            GUILayout.Label($"Unity Assets", titleStyle);
             MVCToolWindow.DrawSeparator();
+            DrawBuildAssetsSection();
+            DrawUploadAssetsToChannelSection();
+        }
 
+        private void DrawBuildAssetsSection()
+        {
             _prefabsToBuildReorderableList.DoLayoutList();
 
             EditorGUILayout.Space();
@@ -150,14 +166,14 @@ namespace MVCTool
             EditorGUILayout.LabelField("Select Build Targets:", EditorStyles.boldLabel);
             foreach (var target in _availableBuildTargets)
             {
-                bool newValue = EditorGUILayout.ToggleLeft(AssetBundler.SupportedBuildTargets[target].DisplayName, _buildTargetOptions[target]);
+                bool newValue = EditorGUILayout.ToggleLeft(ContentUploader.SupportedBuildTargets[target].DisplayName, _buildTargetOptions[target]);
                 if (newValue != _buildTargetOptions[target])
                 {
                     _buildTargetOptions[target] = newValue;
-                    EditorPrefs.SetBool(AssetBundler.SupportedBuildTargets[target].EditorPrefsKey, _buildTargetOptions[target]);
+                    EditorPrefs.SetBool(ContentUploader.SupportedBuildTargets[target].EditorPrefsKey, _buildTargetOptions[target]);
                     _selectedBuildTargets = GetSelectedBuildTargets();
 
-                    AssetBundler.ClearBuiltPrefabs();
+                    ContentUploader.ClearBuiltPrefabs();
                     _builtPrefabs.Clear();
 
                     ForceDraw();
@@ -187,18 +203,10 @@ namespace MVCTool
             _builtPrefabsReorderableList.DoLayoutList();
         }
 
-        private void DrawUploadToChannelSection()
+        private void DrawUploadAssetsToChannelSection()
         {
-            bool canUpload = AssetBundler.BuiltPrefabManifests.Count > 0 && !_isUploading;
+            bool canUpload = ContentUploader.BuiltPrefabManifests.Count > 0 && !_isUploading;
             EditorGUI.BeginDisabledGroup(!canUpload);
-
-            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 20,
-                alignment = TextAnchor.MiddleCenter
-            };
-            GUILayout.Label($"Upload", titleStyle);
-            MVCToolWindow.DrawSeparator();
 
             EditorGUILayout.LabelField("Enter Channel ID:", EditorStyles.boldLabel);
             _channelID = EditorGUILayout.TextField("Channel ID", _channelID);
@@ -260,8 +268,8 @@ namespace MVCTool
                 return;
             }
 
-            AssetBundler.BuildPrefabs(_prefabsToBuild, GetSelectedBuildTargets());
-            _builtPrefabs = AssetBundler.GetBuiltPrefabs();
+            ContentUploader.BuildPrefabs(_prefabsToBuild, GetSelectedBuildTargets());
+            _builtPrefabs = ContentUploader.GetBuiltPrefabs();
             _builtPrefabsReorderableList.list = _builtPrefabs;
         }
 
@@ -274,7 +282,7 @@ namespace MVCTool
 
             try
             {
-                await AssetBundler.UploadBuiltPrefabsToChannel(channelID);
+                await ContentUploader.UploadBuiltPrefabsToChannel(channelID);
                 _uploadStatusMessage = $"Asset bundles uploaded to {channelID} successfully!";
             }
             catch (System.Exception e)
