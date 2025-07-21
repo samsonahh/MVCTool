@@ -24,5 +24,10 @@ namespace MVCTool
             fontSize = 12,
             wordWrap = true
         };
+
+        public static GUIStyle RichTextLabelStyle => new GUIStyle(EditorStyles.label)
+        {
+            richText = true,
+        };
     }
 }

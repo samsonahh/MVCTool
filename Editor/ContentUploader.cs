@@ -373,27 +373,22 @@ namespace MVCTool
             }
         }
 
-        /// Upload file to channel 
-        /// API Endpoint: https://mvcdev.represent.org/strapi/api/uploadContentToChannel
-        /// 
-        public static async UniTask UploadContentToChannel(string channelID, byte[] fileBytes, string fileName, bool published = true)
+        /// <summary>
+        /// Uploads a non-Unity file to a specific channel.
+        /// Doesn't support web url uploads, only local file paths.
+        /// </summary>
+        public static async UniTask UploadContentToChannel(string channelID, string filePath)
         {
-            if (fileBytes == null || fileBytes.Length == 0)
-            {
-                Debug.LogError("File bytes are empty. Cannot upload.");
-                throw new System.Exception("Empty file data.");
-            }
-
             if (string.IsNullOrEmpty(channelID))
             {
                 Debug.LogError("Channel ID is not set. Please provide a valid channel ID.");
                 throw new System.Exception("Channel ID is not set.");
             }
 
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
-                Debug.LogError("File name is required.");
-                throw new System.Exception("File name is required.");
+                Debug.LogError($"File path is invalid or file does not exist: {filePath}");
+                throw new System.Exception("File path is invalid.");
             }
 
             string baseUrl = LoginApi.BaseUrl.TrimEnd('/');
@@ -401,20 +396,24 @@ namespace MVCTool
 
             try
             {
+                byte[] fileBytes = File.ReadAllBytes(filePath);
+                string fileName = Path.GetFileName(filePath);
+
                 WWWForm form = new WWWForm();
-                form.AddBinaryData(fileName, fileBytes, fileName, "text/plain"); // Adjust MIME type as needed
+
+                form.AddBinaryData(fileName, fileBytes, fileName);
                 form.AddField("uniqueID", channelID);
-                form.AddField("published", published ? "true" : "false");
+                form.AddField("published", "true");
 
                 UnityWebRequest request = await LoginApi.AuthenticatedPost(targetUrl, form);
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError($"UploadContentToChannel failed: {request.error}");
+                    Debug.LogError($"Upload failed: {request.error}");
                     Debug.LogError($"Server response: {request.downloadHandler.text}");
                 }
                 else
-                    Debug.Log($"Successfully uploaded content file {fileName} to {targetUrl}.");
+                    Debug.Log($"Successfully uploaded {fileName} to {targetUrl}");
             }
             catch (System.Exception e)
             {
@@ -422,7 +421,6 @@ namespace MVCTool
                 throw;
             }
         }
-
     }
 
     public struct BuildTargetData
