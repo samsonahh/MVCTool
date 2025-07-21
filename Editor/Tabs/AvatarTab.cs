@@ -40,9 +40,9 @@ namespace MVCTool
 
             EditorGUI.BeginDisabledGroup(!_isLoggedIn || _isUploading);
 
-            MVCToolWindow.DrawSeparator();
+            MVCTheme.DrawSeparator();
             DrawBuildSection();
-            MVCToolWindow.DrawSeparator();
+            MVCTheme.DrawSeparator();
             DrawUploadSection();
 
             EditorGUI.EndDisabledGroup();
@@ -90,22 +90,13 @@ namespace MVCTool
 
         private void DrawEditorSection()
         {
-            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 20,
-                alignment = TextAnchor.MiddleCenter
-            };
-            GUILayout.Label($"Editor", titleStyle);
-            MVCToolWindow.DrawSeparator();
+            GUILayout.Label($"Editor", MVCTheme.HeadingStyle);
+            MVCTheme.DrawSeparator();
 
             GUILayout.Box(
                 $"Please make sure you are double-clicked into the MVCAvatar prefab and are inside prefab view.\n" +
                 $"Select the parent MVCAvatar GameObject inside the prefab view hierarchy.",
-                new GUIStyle(EditorStyles.helpBox)
-                {
-                    fontSize = 12,
-                    wordWrap = true
-                }
+                MVCTheme.BoxStyle
             );
 
             MVCAvatar selectedAvatar = _selectedObject != null ? _selectedObject.GetComponent<MVCAvatar>() : null;
@@ -133,13 +124,8 @@ namespace MVCTool
 
         private void DrawBuildSection()
         {
-            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 20,
-                alignment = TextAnchor.MiddleCenter
-            };
-            GUILayout.Label($"Build", titleStyle);
-            MVCToolWindow.DrawSeparator();
+            GUILayout.Label($"Build", MVCTheme.HeadingStyle);
+            MVCTheme.DrawSeparator();
 
             _avatarPrefabToBuild = EditorGUILayout.ObjectField("Avatar Prefab to Build", _avatarPrefabToBuild, typeof(GameObject), false) as GameObject;
 
@@ -202,13 +188,8 @@ namespace MVCTool
             bool canUpload = ContentUploader.BuiltAvatarPrefabData != null && !_isUploading;
             EditorGUI.BeginDisabledGroup(!canUpload);
 
-            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 20,
-                alignment = TextAnchor.MiddleCenter
-            };
-            GUILayout.Label($"Upload", titleStyle);
-            MVCToolWindow.DrawSeparator();
+            GUILayout.Label($"Upload", MVCTheme.HeadingStyle);
+            MVCTheme.DrawSeparator();
 
             if (GUILayout.Button("Upload Avatar", GUILayout.Height(30)))
             {

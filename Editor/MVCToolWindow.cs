@@ -52,7 +52,7 @@ namespace MVCTool
 
             _tabManager.DrawToolbar();
 
-            DrawSeparator();
+            MVCTheme.DrawSeparator();
 
             _scrollPosition = EditorGUILayout.BeginScrollView(_scrollPosition);
 
@@ -71,14 +71,6 @@ namespace MVCTool
             }*/
 
             EditorGUILayout.EndScrollView();
-        }
-
-        public static void DrawSeparator()
-        {
-            EditorGUILayout.Space(4);
-            Rect rect = EditorGUILayout.GetControlRect(false, 2);
-            EditorGUI.DrawRect(rect, Color.gray);
-            EditorGUILayout.Space(4);
         }
     }
 }

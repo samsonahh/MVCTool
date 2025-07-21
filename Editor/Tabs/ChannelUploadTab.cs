@@ -36,7 +36,7 @@ namespace MVCTool
             EditorGUI.BeginDisabledGroup(!_isLoggedIn || _isUploading);
 
             DrawNonUnityContentSection();
-            MVCToolWindow.DrawSeparator();
+            MVCTheme.DrawSeparator();
             DrawUnityAssetsSection();
 
             EditorGUI.EndDisabledGroup();
@@ -85,13 +85,8 @@ namespace MVCTool
 
         private void DrawNonUnityContentSection()
         {
-            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 20,
-                alignment = TextAnchor.MiddleCenter
-            };
-            GUILayout.Label($"Non-Unity Content", titleStyle);
-            MVCToolWindow.DrawSeparator();
+            GUILayout.Label($"Non-Unity Content", MVCTheme.HeadingStyle);
+            MVCTheme.DrawSeparator();
         }
 
         private ReorderableList CreatePrefabsToBuildReorderableList()
@@ -146,13 +141,8 @@ namespace MVCTool
 
         private void DrawUnityAssetsSection()
         {
-            GUIStyle titleStyle = new GUIStyle(EditorStyles.boldLabel)
-            {
-                fontSize = 20,
-                alignment = TextAnchor.MiddleCenter
-            };
-            GUILayout.Label($"Unity Assets", titleStyle);
-            MVCToolWindow.DrawSeparator();
+            GUILayout.Label($"Unity Assets", MVCTheme.HeadingStyle);
+            MVCTheme.DrawSeparator();
             DrawBuildAssetsSection();
             DrawUploadAssetsToChannelSection();
         }
