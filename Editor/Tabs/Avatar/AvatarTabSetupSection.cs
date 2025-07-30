@@ -7,6 +7,7 @@ namespace MVCTool
     public class AvatarTabSetupSection : EditorTabSection
     {
         public override string SectionName => "Setup";
+        public override bool IsDisabled => false;
 
         private GameObject _selectedObject;
 

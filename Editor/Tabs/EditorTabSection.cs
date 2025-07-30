@@ -5,12 +5,14 @@ namespace MVCTool
 {
     public abstract class EditorTabSection
     {
-        private EditorTab _tab;
+        private protected EditorTab _parentTab;
 
         public abstract string SectionName { get; }
+        public abstract bool IsDisabled { get; }
+
         public void Init(EditorTab tab)
         {
-            _tab = tab;
+            _parentTab = tab;
             Load();
         }
 
@@ -34,10 +36,14 @@ namespace MVCTool
         /// </summary>
         public void Draw()
         {
+            EditorGUI.BeginDisabledGroup(IsDisabled);
+
             GUILayout.Label($"{SectionName}", MVCTheme.HeadingStyle);
             MVCTheme.DrawSeparator();
 
             OnDraw();
+
+            EditorGUI.EndDisabledGroup();
         }
 
         /// <summary>
@@ -56,7 +62,7 @@ namespace MVCTool
         /// </summary>
         public void ForceDraw()
         {
-            _tab.ForceDraw();
+            _parentTab.ForceDraw();
         }
     }
 }

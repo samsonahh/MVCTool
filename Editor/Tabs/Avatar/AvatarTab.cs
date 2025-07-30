@@ -1,6 +1,4 @@
-using System;
 using UnityEditor;
-using static UnityEditor.EditorGUI;
 
 namespace MVCTool
 {
@@ -8,24 +6,24 @@ namespace MVCTool
     {
         public override string TabName => "Avatar";
 
-        private AvatarTabSetupSection setupSection;
-        private AvatarTabBuildSection buildSection;
-        private AvatarTabUploadSection uploadSection;
+        private AvatarTabSetupSection _setupSection;
+        private AvatarTabBuildSection _buildSection;
+        private AvatarTabUploadSection _uploadSection;
 
         private protected override void Load()
         {
-            setupSection = new AvatarTabSetupSection();
-            buildSection = new AvatarTabBuildSection();
-            uploadSection = new AvatarTabUploadSection();
+            _setupSection = new AvatarTabSetupSection();
+            _buildSection = new AvatarTabBuildSection();
+            _uploadSection = new AvatarTabUploadSection();
 
-            AddSection(setupSection);
-            AddSection(buildSection);
-            AddSection(uploadSection);
+            AddSection(_setupSection);
+            AddSection(_buildSection);
+            AddSection(_uploadSection);
         }
 
         private protected override void OnDraw()
         {
-
+            
         }
 
         private protected override void OnDrawAfterSections()

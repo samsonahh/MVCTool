@@ -7,6 +7,7 @@ namespace MVCTool
     public class AvatarTabUploadSection : EditorTabSection
     {
         public override string SectionName => "Upload";
+        public override bool IsDisabled => !LoginApi.IsLoggedIn || IsUploading;
 
         public bool IsUploading { get; private set; } = false;
 

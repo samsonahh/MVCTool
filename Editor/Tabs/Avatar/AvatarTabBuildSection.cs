@@ -7,6 +7,7 @@ namespace MVCTool
     public class AvatarTabBuildSection : EditorTabSection
     {
         public override string SectionName => "Build";
+        public override bool IsDisabled => !LoginApi.IsLoggedIn;
 
         private HashSet<BuildTarget> _availableBuildTargets = new HashSet<BuildTarget>();
         private Dictionary<BuildTarget, bool> _buildTargetOptions = new Dictionary<BuildTarget, bool>();
