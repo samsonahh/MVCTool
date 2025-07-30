@@ -10,6 +10,8 @@ namespace MVCTool
     {
         public static string BaseUrl { get; private set; }
         public static string BearerToken { get; private set; } = null;
+        public static bool HasBearerToken => !string.IsNullOrEmpty(BearerToken);
+        public static bool IsLoggedIn => HasBearerToken;
 
         public static readonly string DefaultBaseUrl = "https://mvcdev.represent.org/";
 
@@ -98,8 +100,6 @@ namespace MVCTool
             if (string.IsNullOrEmpty(BearerToken))
                 BearerToken = null;
         }
-
-        public static bool HasBearerToken => !string.IsNullOrEmpty(BearerToken);
 
         public static async UniTask<UnityWebRequest> AuthenticatedGet(string url)
         {

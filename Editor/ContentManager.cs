@@ -5,13 +5,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using Unity.Plastic.Newtonsoft.Json;
+using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace MVCTool
 {
-    public static class ContentUploader
+    public static class ContentManager
     {
         public static readonly Dictionary<BuildTarget, BuildTargetData> SupportedBuildTargets = new Dictionary<BuildTarget, BuildTargetData>
         {
@@ -418,6 +420,102 @@ namespace MVCTool
             catch (System.Exception e)
             {
                 Debug.LogError($"UploadContentToChannel failed: {e}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of content tuples (ID, name) for a specific channel.
+        /// </summary>
+        /// <param name="channelID"></param>
+        /// <returns></returns>
+        public static async UniTask<List<(int id, string name)>> ListContentFromChannel(string channelID)
+        {
+            if (string.IsNullOrEmpty(channelID))
+            {
+                Debug.LogError("Channel ID is required.");
+                return null;
+            }
+
+            string baseUrl = LoginApi.BaseUrl.TrimEnd('/');
+            string targetUrl = $"{baseUrl}/strapi/api/getAllContentForChannel?uniqueID={UnityWebRequest.EscapeURL(channelID)}";
+
+            try
+            {
+                UnityWebRequest request = await LoginApi.AuthenticatedGet(targetUrl);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"Failed to get content: {request.error}");
+                    return null;
+                }
+
+                string json = request.downloadHandler.text;
+                JArray array = JArray.Parse(json);
+
+                var results = new List<(int id, string name)>();
+
+                foreach (var item in array)
+                {
+                    int id = item.Value<int>("id");
+
+                    var mediafileToken = item["mediafile"];
+                    string name = null;
+
+                    if (mediafileToken != null && mediafileToken.Type == JTokenType.Object)
+                    {
+                        name = mediafileToken["name"]?.Value<string>();
+                    }
+
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        results.Add((id, name));
+                    }
+                }
+
+                return results;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Exception in ListContentFromChannel: {e}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Deletes a previously uploaded file from a channel by content ID.
+        /// </summary>
+        public static async UniTask DeleteContentFromChannel(string contentID)
+        {
+            if (string.IsNullOrEmpty(contentID))
+            {
+                Debug.LogError("Content ID is not provided.");
+                throw new System.Exception("Content ID is required to delete content.");
+            }
+
+            string baseUrl = LoginApi.BaseUrl.TrimEnd('/');
+            string targetUrl = $"{baseUrl}/strapi/api/deleteContent";
+
+            try
+            {
+                WWWForm form = new WWWForm();
+                form.AddField("id", contentID);
+
+                UnityWebRequest request = await LoginApi.AuthenticatedPost(targetUrl, form);
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"Delete failed: {request.error}");
+                    Debug.LogError($"Server response: {request.downloadHandler.text}");
+                }
+                else
+                {
+                    Debug.Log($"Successfully deleted content with ID: {contentID}");
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"DeleteContentFromChannel failed: {e}");
                 throw;
             }
         }

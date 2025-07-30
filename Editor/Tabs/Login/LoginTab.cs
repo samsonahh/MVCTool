@@ -20,7 +20,7 @@ namespace MVCTool
 
         private string _errorMessage = null;
 
-        public override void Draw()
+        private protected override void OnDraw()
         {
             bool isLoggedIn = !string.IsNullOrEmpty(LoginApi.BearerToken);
             if (!isLoggedIn)
@@ -48,12 +48,17 @@ namespace MVCTool
             }
         }
 
-        public override void OnEnter()
+        private protected override void OnDrawAfterSections()
+        {
+           
+        }
+
+        private protected override void OnEnter()
         {
 
         }
 
-        public override void OnExit()
+        private protected override void OnExit()
         {
 
         }
@@ -69,7 +74,7 @@ namespace MVCTool
             LoginApi.LoadStoredBearerToken();
         }
 
-        public override void Reset()
+        private protected override void OnReset()
         {
             LoginApi.ClearBearerToken();
 

@@ -47,10 +47,10 @@ namespace MVCTool
             if (CurrentTab == newTab)
                 return;
 
-            CurrentTab?.OnExit();
+            CurrentTab?.Exit();
             CurrentTab = newTab;
             GUI.FocusControl(null);
-            CurrentTab?.OnEnter();
+            CurrentTab?.Enter();
 
             SessionState.SetInt(_savedTabIndexSessionKey, Tabs.IndexOf(CurrentTab));
 
@@ -64,7 +64,7 @@ namespace MVCTool
 
         public void Shutdown()
         {
-            CurrentTab?.OnExit();
+            CurrentTab?.Exit();
         }
 
         public void Reset()
