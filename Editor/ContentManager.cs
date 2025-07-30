@@ -434,7 +434,7 @@ namespace MVCTool
             if (string.IsNullOrEmpty(channelID))
             {
                 Debug.LogError("Channel ID is required.");
-                return null;
+                return new();
             }
 
             string baseUrl = LoginApi.BaseUrl.TrimEnd('/');
@@ -447,7 +447,7 @@ namespace MVCTool
                 if (request.result != UnityWebRequest.Result.Success)
                 {
                     Debug.LogError($"Failed to get content: {request.error}");
-                    return null;
+                    return new();
                 }
 
                 string json = request.downloadHandler.text;
@@ -478,14 +478,14 @@ namespace MVCTool
             catch (Exception e)
             {
                 Debug.LogError($"Exception in ListContentFromChannel: {e}");
-                return null;
+                return new();
             }
         }
 
         /// <summary>
         /// Deletes a previously uploaded file from a channel by content ID.
         /// </summary>
-        public static async UniTask DeleteContentFromChannel(string contentID)
+        public static async UniTask DeleteContent(string contentID)
         {
             if (string.IsNullOrEmpty(contentID))
             {

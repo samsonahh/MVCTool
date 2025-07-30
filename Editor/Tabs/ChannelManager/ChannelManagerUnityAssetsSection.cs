@@ -174,8 +174,8 @@ namespace MVCTool
 
             if (GUILayout.Button("Upload to Channel", GUILayout.Height(30)))
             {
-                UploadUnityAssetsToChannel(_channelManagerTab.ChannelID).Forget();
-                EditorPrefs.SetString(ChannelManagerTab.ChannelIDEditorPrefsKey, _channelManagerTab.ChannelID);
+                UploadUnityAssetsToChannel(_channelManagerTab.ChannelSection.ChannelID).Forget();
+                EditorPrefs.SetString(ChannelManagerChannelSection.ChannelIDEditorPrefsKey, _channelManagerTab.ChannelSection.ChannelID);
             }
 
             EditorGUI.EndDisabledGroup();

@@ -6,19 +6,19 @@ namespace MVCTool
     {
         public override string TabName => "Avatar";
 
-        private AvatarTabSetupSection _setupSection;
-        private AvatarTabBuildSection _buildSection;
-        private AvatarTabUploadSection _uploadSection;
+        public AvatarTabSetupSection SetupSection { get; private set; }
+        public AvatarTabBuildSection BuildSection { get; private set; }
+        public AvatarTabUploadSection UploadSection { get; private set; }
 
         private protected override void Load()
         {
-            _setupSection = new AvatarTabSetupSection();
-            _buildSection = new AvatarTabBuildSection();
-            _uploadSection = new AvatarTabUploadSection();
+            SetupSection = new AvatarTabSetupSection();
+            BuildSection = new AvatarTabBuildSection();
+            UploadSection = new AvatarTabUploadSection();
 
-            AddSection(_setupSection);
-            AddSection(_buildSection);
-            AddSection(_uploadSection);
+            AddSection(SetupSection);
+            AddSection(BuildSection);
+            AddSection(UploadSection);
         }
 
         private protected override void OnDraw()

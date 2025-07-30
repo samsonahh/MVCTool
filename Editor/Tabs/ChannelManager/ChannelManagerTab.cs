@@ -7,21 +7,19 @@ namespace MVCTool
     {
         public override string TabName => "Channel Manager";
 
-        public const string ChannelIDEditorPrefsKey = "MVCTool_ChannelID";
-        public string ChannelID { get; private set; } = null;
-
-        private ChannelManagerNonUnityContentSection _nonUnityContentSection;
-        private ChannelManagerUnityAssetsSection _unityAssetsSection;
+        public ChannelManagerChannelSection ChannelSection { get; private set; }
+        public ChannelManagerNonUnityContentSection NonUnityContentSection { get; private set; }
+        public ChannelManagerUnityAssetsSection UnityAssetsSection { get; private set; }
 
         private protected override void Load()
         {
-            _nonUnityContentSection = new ChannelManagerNonUnityContentSection();
-            _unityAssetsSection = new ChannelManagerUnityAssetsSection();
+            ChannelSection = new ChannelManagerChannelSection();
+            NonUnityContentSection = new ChannelManagerNonUnityContentSection();
+            UnityAssetsSection = new ChannelManagerUnityAssetsSection();
 
-            AddSection(_nonUnityContentSection);
-            AddSection(_unityAssetsSection);
-
-            ChannelID = EditorPrefs.GetString(ChannelIDEditorPrefsKey, null);
+            AddSection(ChannelSection);
+            AddSection(NonUnityContentSection);
+            AddSection(UnityAssetsSection);
         }
 
         private protected override void OnEnter()
@@ -36,11 +34,7 @@ namespace MVCTool
 
         private protected override void OnDraw()
         {
-            EditorGUI.BeginDisabledGroup(!LoginApi.IsLoggedIn || _unityAssetsSection.IsUploadingAsset);
-
-            ChannelID = EditorGUILayout.TextField("Channel ID", ChannelID);
-            EditorGUILayout.Space(2.5f);
-            MVCTheme.DrawSeparator();
+            EditorGUI.BeginDisabledGroup(!LoginApi.IsLoggedIn || UnityAssetsSection.IsUploadingAsset);
         }
 
         private protected override void OnDrawAfterSections()
@@ -53,7 +47,7 @@ namespace MVCTool
 
         private protected override void OnReset()
         {
-            EditorPrefs.DeleteKey(ChannelIDEditorPrefsKey); 
+            
         }
     }
 }

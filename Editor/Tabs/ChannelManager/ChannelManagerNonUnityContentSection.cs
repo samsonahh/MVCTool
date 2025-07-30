@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace MVCTool
 {
-
     public class ChannelManagerNonUnityContentSection : EditorTabSection
     {
         public override string SectionName => "Non-Unity Content";
@@ -49,7 +48,7 @@ namespace MVCTool
             EditorGUI.BeginDisabledGroup(!isFileSelected || _isUploadingContent);
             if (GUILayout.Button("Upload File", GUILayout.Height(30)))
             {
-                UploadNonUnityContentToChannel(_channelManagerTab.ChannelID, _currentSelectedPath).Forget();
+                UploadNonUnityContentToChannel(_channelManagerTab.ChannelSection.ChannelID, _currentSelectedPath).Forget();
             }
             EditorGUI.EndDisabledGroup();
 
