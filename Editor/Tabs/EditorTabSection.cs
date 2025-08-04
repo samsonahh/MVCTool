@@ -64,5 +64,14 @@ namespace MVCTool
         {
             _parentTab.ForceDraw();
         }
+
+        /// <summary>
+        /// Refreshes the the entire tab by re-entering the parent tab.
+        /// </summary>
+        public void RefreshTab()
+        {
+            _parentTab.Enter();
+            ForceDraw();
+        }
     }
 }

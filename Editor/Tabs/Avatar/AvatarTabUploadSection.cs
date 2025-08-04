@@ -32,7 +32,7 @@ namespace MVCTool
 
         private protected override void OnDraw()
         {
-            bool canUpload = ContentManager.BuiltAvatarPrefabData != null && !IsUploading;
+            bool canUpload = AssetManager.BuiltAvatarPrefabData != null && !IsUploading;
             EditorGUI.BeginDisabledGroup(!canUpload);
 
             if (GUILayout.Button("Upload Avatar", GUILayout.Height(30)))
@@ -42,7 +42,7 @@ namespace MVCTool
 
             EditorGUI.EndDisabledGroup();
 
-            bool isBuildWarningVisible = ContentManager.BuiltAvatarPrefabData?.Prefab == null;
+            bool isBuildWarningVisible = AssetManager.BuiltAvatarPrefabData?.Prefab == null;
             if (LoginApi.IsLoggedIn && isBuildWarningVisible)
             {
                 EditorGUILayout.HelpBox("Please build your avatar prefab to upload.", MessageType.Warning);
@@ -70,7 +70,7 @@ namespace MVCTool
 
             try
             {
-                await ContentManager.UploadBuiltAvatarPrefab();
+                await AssetManager.UploadBuiltAvatarPrefab();
                 _uploadStatusMessage = $"Avatar uploaded successfully!";
             }
             catch (System.Exception e)

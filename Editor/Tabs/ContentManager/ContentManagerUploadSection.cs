@@ -5,12 +5,10 @@ using UnityEngine;
 
 namespace MVCTool
 {
-    public class ChannelManagerNonUnityContentSection : EditorTabSection
+    public class ContentManagerUploadSection : EditorTabSection
     {
-        public override string SectionName => "Non-Unity Content";
-        public override bool IsDisabled => false;
-
-        private ChannelManagerTab _channelManagerTab;
+        public override string SectionName => "Upload";
+        public override bool IsDisabled => !LoginApi.IsLoggedIn || _isUploadingContent;
 
         private string _currentSelectedPath = "";
 
@@ -21,7 +19,7 @@ namespace MVCTool
 
         private protected override void Load()
         {
-            _channelManagerTab = _parentTab as ChannelManagerTab;
+            
         }
 
         public override void OnEnter()
@@ -46,9 +44,9 @@ namespace MVCTool
 
             bool isFileSelected = !string.IsNullOrEmpty(_currentSelectedPath);
             EditorGUI.BeginDisabledGroup(!isFileSelected || _isUploadingContent);
-            if (GUILayout.Button("Upload File", GUILayout.Height(30)))
+            if (GUILayout.Button($"Upload File to Channel", GUILayout.Height(30)))
             {
-                UploadNonUnityContentToChannel(_channelManagerTab.ChannelSection.ChannelID, _currentSelectedPath).Forget();
+                UploadNonUnityContentToChannel(ChannelManagerSelectSection.ChannelID, _currentSelectedPath).Forget();
             }
             EditorGUI.EndDisabledGroup();
 

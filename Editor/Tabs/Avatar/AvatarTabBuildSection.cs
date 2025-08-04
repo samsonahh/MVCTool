@@ -17,21 +17,21 @@ namespace MVCTool
 
         private protected override void Load()
         {
-            _availableBuildTargets = ContentManager.GetAvailableBuildTargets();
+            _availableBuildTargets = AssetManager.GetAvailableBuildTargets();
             _buildTargetOptions = new Dictionary<BuildTarget, bool>();
             foreach (var target in _availableBuildTargets)
             {
-                _buildTargetOptions[target] = EditorPrefs.GetBool(ContentManager.SupportedBuildTargets[target].EditorPrefsKey, false);
+                _buildTargetOptions[target] = EditorPrefs.GetBool(AssetManager.SupportedBuildTargets[target].EditorPrefsKey, false);
             }
         }
 
         public override void OnEnter()
         {
-            _availableBuildTargets = ContentManager.GetAvailableBuildTargets();
+            _availableBuildTargets = AssetManager.GetAvailableBuildTargets();
             _buildTargetOptions = new Dictionary<BuildTarget, bool>();
             foreach (var target in _availableBuildTargets)
             {
-                _buildTargetOptions[target] = EditorPrefs.GetBool(ContentManager.SupportedBuildTargets[target].EditorPrefsKey, false);
+                _buildTargetOptions[target] = EditorPrefs.GetBool(AssetManager.SupportedBuildTargets[target].EditorPrefsKey, false);
             }
             _selectedBuildTargets = GetSelectedBuildTargets();
         }
@@ -50,14 +50,14 @@ namespace MVCTool
             EditorGUILayout.LabelField("Select Build Targets:", EditorStyles.boldLabel);
             foreach (var target in _availableBuildTargets)
             {
-                bool newValue = EditorGUILayout.ToggleLeft(ContentManager.SupportedBuildTargets[target].DisplayName, _buildTargetOptions[target]);
+                bool newValue = EditorGUILayout.ToggleLeft(AssetManager.SupportedBuildTargets[target].DisplayName, _buildTargetOptions[target]);
                 if (newValue != _buildTargetOptions[target])
                 {
                     _buildTargetOptions[target] = newValue;
-                    EditorPrefs.SetBool(ContentManager.SupportedBuildTargets[target].EditorPrefsKey, _buildTargetOptions[target]);
+                    EditorPrefs.SetBool(AssetManager.SupportedBuildTargets[target].EditorPrefsKey, _buildTargetOptions[target]);
                     _selectedBuildTargets = GetSelectedBuildTargets();
 
-                    ContentManager.ClearBuiltAvatarPrefabData();
+                    AssetManager.ClearBuiltAvatarPrefabData();
 
                     ForceDraw();
                 }
@@ -81,12 +81,12 @@ namespace MVCTool
             else if (!isAvatarPrefab)
             {
                 EditorGUILayout.HelpBox("The selected prefab does not contain an MVCAvatar component.", MessageType.Warning);
-                ContentManager.ClearBuiltAvatarPrefabData();
+                AssetManager.ClearBuiltAvatarPrefabData();
             }
             else if (!canUploadAvatar)
             {
                 EditorGUILayout.HelpBox("The selected MVCAvatar is not ready for upload. Please ensure it has the necessary components and references set up.", MessageType.Warning);
-                ContentManager.ClearBuiltAvatarPrefabData();
+                AssetManager.ClearBuiltAvatarPrefabData();
             }
 
             if (!hasBuildTargets)
@@ -95,7 +95,7 @@ namespace MVCTool
             EditorGUILayout.Space();
 
             GUI.enabled = false;
-            EditorGUILayout.ObjectField("Built Avatar Prefab", ContentManager.BuiltAvatarPrefabData?.Prefab, typeof(GameObject), false);
+            EditorGUILayout.ObjectField("Built Avatar Prefab", AssetManager.BuiltAvatarPrefabData?.Prefab, typeof(GameObject), false);
             GUI.enabled = true;
         }
 
@@ -119,7 +119,7 @@ namespace MVCTool
 
         private void BuildAvatarPrefab()
         {
-            ContentManager.BuildAvatarPrefab(_avatarPrefabToBuild, GetSelectedBuildTargets());
+            AssetManager.BuildAvatarPrefab(_avatarPrefabToBuild, GetSelectedBuildTargets());
         }
     }
 }

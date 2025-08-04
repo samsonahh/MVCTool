@@ -1,4 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -34,13 +36,14 @@ namespace MVCTool
             }
 
             baseUrl = baseUrl.TrimEnd('/');
+            string targetUrl = $"{baseUrl}/strapi/api/auth/local";
 
             WWWForm form = new WWWForm();
             form.AddField("identifier", username);
             form.AddField("password", password);
             Debug.Log($"Attempting to login as {username}");
 
-            UnityWebRequest w = UnityWebRequest.Post($"{baseUrl}/strapi/api/auth/local", form);
+            UnityWebRequest w = UnityWebRequest.Post(targetUrl, form);
             await w.SendWebRequest();
 
             if (w.result != UnityWebRequest.Result.Success)
@@ -110,9 +113,7 @@ namespace MVCTool
             await request.SendWebRequest();
 
             if (ValidateTokenFromRequest(request) == TokenValidationResult.InvalidToken)
-            {
                 HandleInvalidTokenResponse();
-            }
 
             return request;
         }
@@ -126,9 +127,7 @@ namespace MVCTool
             await request.SendWebRequest();
 
             if (ValidateTokenFromRequest(request) == TokenValidationResult.InvalidToken)
-            {
                 HandleInvalidTokenResponse();
-            }
 
             return request;
         }
@@ -157,6 +156,20 @@ namespace MVCTool
         {
             Debug.LogWarning("Invalid Bearer Token response received. Clearing token.");
             ClearBearerToken();
+        }
+
+        /// <summary>
+        /// Helper method to create a target URL for API requests.
+        /// </summary>
+        public static string CreateTargetUrl(string endpoint)
+        {
+            if (string.IsNullOrEmpty(BaseUrl))
+            {
+                Debug.LogError("Base URL is not set. Please log in first.");
+                throw new System.Exception("Base URL is required to create target URL.");
+            }
+
+            return $"{BaseUrl.TrimEnd('/')}/strapi/api/{endpoint.TrimStart('/')}";
         }
     }
 }

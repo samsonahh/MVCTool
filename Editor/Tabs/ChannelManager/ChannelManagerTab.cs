@@ -1,5 +1,8 @@
+using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
 
 namespace MVCTool
 {
@@ -7,24 +10,24 @@ namespace MVCTool
     {
         public override string TabName => "Channel Manager";
 
-        public ChannelManagerChannelSection ChannelSection { get; private set; }
-        public ChannelManagerNonUnityContentSection NonUnityContentSection { get; private set; }
-        public ChannelManagerUnityAssetsSection UnityAssetsSection { get; private set; }
+        public ChannelManagerSelectSection SelectSection { get; private set; }
+        public ChannelManagerCreateSection CreateSection { get; private set; }
+        public ChannelManagerDeleteSection DeleteSection { get; private set; }
 
         private protected override void Load()
         {
-            ChannelSection = new ChannelManagerChannelSection();
-            NonUnityContentSection = new ChannelManagerNonUnityContentSection();
-            UnityAssetsSection = new ChannelManagerUnityAssetsSection();
+            SelectSection = new ChannelManagerSelectSection();
+            CreateSection = new ChannelManagerCreateSection();
+            DeleteSection = new ChannelManagerDeleteSection();
 
-            AddSection(ChannelSection);
-            AddSection(NonUnityContentSection);
-            AddSection(UnityAssetsSection);
+            AddSection(SelectSection);
+            AddSection(CreateSection);
+            AddSection(DeleteSection);
         }
 
         private protected override void OnEnter()
         {
-
+            
         }
 
         private protected override void OnExit()
@@ -34,7 +37,7 @@ namespace MVCTool
 
         private protected override void OnDraw()
         {
-            EditorGUI.BeginDisabledGroup(!LoginApi.IsLoggedIn || UnityAssetsSection.IsUploadingAsset);
+            EditorGUI.BeginDisabledGroup(!LoginApi.IsLoggedIn);
         }
 
         private protected override void OnDrawAfterSections()
@@ -42,7 +45,7 @@ namespace MVCTool
             EditorGUI.EndDisabledGroup();
 
             if (!LoginApi.IsLoggedIn)
-                EditorGUILayout.HelpBox("You must be logged in to build or upload asset bundles.", MessageType.Warning);
+                EditorGUILayout.HelpBox("You must be logged in to manage channels.", MessageType.Warning);
         }
 
         private protected override void OnReset()

@@ -8,26 +8,46 @@ namespace MVCTool
 {
     public class MVCToolWindow : EditorWindow
     {
+        public static MVCToolWindow Instance { get; private set; }
+
         private EditorTabManager _tabManager;
 
         private const string SavedTabIndexSessionKey = "MVCTool_SavedTabIndex";
 
         private Vector2 _scrollPosition;
 
+        // Tabs
+        public LoginTab LoginTab { get; private set; }
+        public ChannelManagerTab ChannelManagerTab { get; private set; }
+        public ContentManagerTab ContentManagerTab { get; private set; }
+        public AssetManagerTab AssetManagerTab { get; private set; }
+        public AvatarTab AvatarTab { get; private set; }
+
         [MenuItem("Window/MVCTool")]
         public static void ShowWindow()
         {
-            GetWindow<MVCToolWindow>("MVC Tool");
+            Instance = GetWindow<MVCToolWindow>("MVC Tool");
+            Instance.Focus();
         }
 
         private void OnEnable()
         {
+            Instance = this;
+
+            LoginTab = new LoginTab();
+            ChannelManagerTab = new ChannelManagerTab();
+            ContentManagerTab = new ContentManagerTab();
+            AssetManagerTab = new AssetManagerTab();
+            AvatarTab = new AvatarTab();
+
             _tabManager = new EditorTabManager(
                 new List<EditorTab>()
                 {
-                    new LoginTab(),
-                    new ChannelManagerTab(),
-                    new AvatarTab(),
+                    LoginTab,
+                    ChannelManagerTab,
+                    ContentManagerTab,
+                    AssetManagerTab,
+                    AvatarTab,
                 },
                 this,
                 SavedTabIndexSessionKey
@@ -37,6 +57,15 @@ namespace MVCTool
         private void OnDisable()
         {
             _tabManager.Shutdown();
+
+            if(Instance == this)
+                Instance = null;
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+                Instance = null;
         }
 
         private void OnGUI()

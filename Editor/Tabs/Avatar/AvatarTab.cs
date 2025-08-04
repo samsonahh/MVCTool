@@ -23,11 +23,13 @@ namespace MVCTool
 
         private protected override void OnDraw()
         {
-            
+            EditorGUI.BeginDisabledGroup(!LoginApi.IsLoggedIn);
         }
 
         private protected override void OnDrawAfterSections()
         {
+            EditorGUI.EndDisabledGroup();
+
             if (!LoginApi.IsLoggedIn)
                 EditorGUILayout.HelpBox("You must be logged in to build or upload asset bundles.", MessageType.Warning);
         }
