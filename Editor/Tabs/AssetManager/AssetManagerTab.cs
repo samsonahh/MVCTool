@@ -4,7 +4,7 @@ namespace MVCTool
 {
     public class AssetManagerTab : EditorTab
     {
-        public override string TabName => "Asset Manager";
+        public override string TabName => "Asset";
 
         public AssetManagerBuildSection BuildSection { get; private set; }
         public AssetManagerUploadSection UploadSection { get; private set; }

@@ -8,7 +8,7 @@ namespace MVCTool
 {
     public class ChannelManagerTab : EditorTab
     {
-        public override string TabName => "Channel Manager";
+        public override string TabName => "Channel";
 
         public ChannelManagerSelectSection SelectSection { get; private set; }
         public ChannelManagerCreateSection CreateSection { get; private set; }

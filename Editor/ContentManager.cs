@@ -5,7 +5,6 @@ using System;
 using Unity.Plastic.Newtonsoft.Json.Linq;
 using UnityEngine.Networking;
 using UnityEngine;
-using System.Text;
 
 namespace MVCTool
 {

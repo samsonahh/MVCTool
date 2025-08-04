@@ -4,7 +4,7 @@ namespace MVCTool
 {
     public class ContentManagerTab : EditorTab
     {
-        public override string TabName => "Content Manager";
+        public override string TabName => "Content";
 
         public ContentManagerUploadSection UploadSection { get; private set; }
         public ContentManagerDeleteSection DeleteSection { get; private set; }
