@@ -70,8 +70,9 @@ namespace MVCTool
         /// <summary>
         /// Uploads a non-Unity file to a specific channel.
         /// Doesn't support web url uploads, only local file paths.
+        /// OverrideFilePath can be used to specify a different file name on the server.
         /// </summary>
-        public static async UniTask UploadContentToChannel(string channelID, string filePath)
+        public static async UniTask UploadContentToChannel(string channelID, string filePath, string overrideFilePath = null)
         {
             if (string.IsNullOrEmpty(channelID))
             {
@@ -90,6 +91,9 @@ namespace MVCTool
             try
             {
                 byte[] fileBytes = File.ReadAllBytes(filePath);
+
+                if(!string.IsNullOrEmpty(overrideFilePath))
+                    filePath = overrideFilePath;
                 string fileName = Path.GetFileName(filePath);
 
                 WWWForm form = new WWWForm();
@@ -149,6 +153,63 @@ namespace MVCTool
             {
                 Debug.LogError($"DeleteContentFromChannel failed: {e}");
                 throw;
+            }
+        }
+
+        public class _360Content
+        {
+            private static HashSet<string> _valid360Extensions = new HashSet<string>
+            {
+                // Images
+                ".jpg",
+                ".jpeg",
+                ".png",
+
+                // Videos
+                ".mp4",
+                ".mov",
+                ".mkv",
+                ".avi",
+            };
+
+            public enum ProjectionTypeTags
+            {
+                _180,
+                _360,
+                _fisheye,
+                _fisheye190,
+                _mkx200,
+                _vrca220
+            }
+
+            public enum StereoFormatTags
+            {
+                _SBS,
+                _3DH,
+                _LR,
+                _TB,
+                _3DV,
+                _OverUnder,
+            }
+
+            public static bool HasValid360Extension(string filePath)
+            {
+                string extension = Path.GetExtension(filePath).ToLowerInvariant();
+                return _valid360Extensions.Contains(extension);
+            }
+
+            /// <summary>
+            /// Creates a new file path for a 360 content file based on the original file path and specified tags.
+            /// </summary>
+            public static string Create360FilePath(string originalFilePath, ProjectionTypeTags projectionTypeTags, StereoFormatTags stereoFormatTags)
+            {
+                string directory = Path.GetDirectoryName(originalFilePath);
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(originalFilePath);
+                string extension = Path.GetExtension(originalFilePath);
+
+                string newFileName = $"{fileNameWithoutExtension}{projectionTypeTags}{stereoFormatTags}{extension}";
+
+                return Path.Combine(directory, newFileName);
             }
         }
     }
