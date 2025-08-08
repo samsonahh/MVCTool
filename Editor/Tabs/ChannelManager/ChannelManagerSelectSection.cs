@@ -33,7 +33,7 @@ namespace MVCTool
         private protected override void OnDraw()
         {
             string channelID = EditorGUILayout.TextField("Selected Channel ID", ChannelID);
-            if(!string.IsNullOrEmpty(channelID) && channelID != ChannelID)
+            if(channelID != ChannelID)
             {
                 SetChannelID(channelID);
                 _selectedChannelIndex = _channels.FindIndex(_channels => _channels.channelID == channelID);
@@ -59,7 +59,7 @@ namespace MVCTool
             ChannelManager.GetMyChannels().ContinueWith(channels =>
             {
                 _channels = channels;
-                _selectedChannelIndex = 0;
+                _selectedChannelIndex = _channels.FindIndex(_channels => _channels.channelID == ChannelID);
             }).Forget();
         }
 

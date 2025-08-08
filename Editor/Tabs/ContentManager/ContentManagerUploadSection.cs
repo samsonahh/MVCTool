@@ -50,7 +50,13 @@ namespace MVCTool
             GUILayout.Label($"<b>Selected File:</b> {displayPath}", MVCTheme.RichTextLabelStyle);
             if (GUILayout.Button("Select File", GUILayout.Height(30)))
             {
-                _currentSelectedPath = EditorUtility.OpenFilePanel("Select File", "", "");
+                string newPath = EditorUtility.OpenFilePanel("Select File", "", "");
+                if(_currentSelectedPath != newPath)
+                {
+                    _currentSelectedPath = newPath;
+                    _is360Content = false;
+                    ForceDraw();
+                }
             }
 
             bool isFileSelected = !string.IsNullOrEmpty(_currentSelectedPath);
